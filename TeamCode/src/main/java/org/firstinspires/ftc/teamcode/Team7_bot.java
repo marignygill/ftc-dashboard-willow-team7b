@@ -68,11 +68,11 @@ public class Team7_bot extends LinearOpMode {
     private DcMotor armDrive = null;
 
     private Servo clawServo = null;
-    public static int top = 400;
+    public static int top = 450;
 
-    public static int bot = 65;
+    public static int bot = 80;
     public static double open = 0.5;
-    public static double close = 0.5;
+    public static double close = .9;
 
     @Override
     public void runOpMode() {
@@ -151,27 +151,34 @@ public class Team7_bot extends LinearOpMode {
             if(gamepad1.dpad_up){
                 armDrive.setTargetPosition(top);
                 armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armDrive.setPower(0.75);
+                armDrive.setPower(0.6);
             }
             else if(gamepad1.dpad_down){
                 armDrive.setTargetPosition(bot);
                 armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armDrive.setPower(-0.75);
+                armDrive.setPower(.6);
             }
 
-            if(gamepad1.dpad_left){
-                top = top - 100;
+            if(gamepad1.dpad_right){
+                top = top + 10;
+                armDrive.setTargetPosition(top);
+                armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armDrive.setPower(.6);
             }
-            else if (gamepad1.dpad_right) {
-                top = top + 100;
+            if(gamepad1.dpad_right){
+                top = top - 10;
+                armDrive.setTargetPosition(top);
+                armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armDrive.setPower(.6);
+            }
 
-            }
+
 
             if (gamepad1.a){
-                clawServo.setPosition(top);
+                clawServo.setPosition(open);
             }
             else if(gamepad1.b){
-                clawServo.setPosition(bot);
+                clawServo.setPosition(close);
             }
 
 
