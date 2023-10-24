@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -54,6 +55,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Team7_bot")
+@Config
 //@Disabled
 public class Team7_bot extends LinearOpMode {
 
@@ -66,6 +68,11 @@ public class Team7_bot extends LinearOpMode {
     private DcMotor armDrive = null;
 
     private Servo clawServo = null;
+    public static int top = 400;
+
+    public static int bot = 65;
+    public static double open = 0.5;
+    public static double close = 0.5;
 
     @Override
     public void runOpMode() {
@@ -79,16 +86,17 @@ public class Team7_bot extends LinearOpMode {
         leftRear  = hardwareMap.get(DcMotor.class, "leftRear");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
-        armDrive = hardwareMap.get(DcMotor.class, "arm_Drive");
+        armDrive = hardwareMap.get(DcMotor.class, "arm");
+        clawServo = hardwareMap.get(Servo.class, "clawServo");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
+//        rightFront.setDirection(DcMotor.Direction.REVERSE);
+//        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        armDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -101,38 +109,76 @@ public class Team7_bot extends LinearOpMode {
             double rightPower;
             double armPower;
 
+
             // Choose to drive using either Tank Mode, or POV Mode
             // Comment out the method that's not used.  The default below is POV.
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
+            //double drive = -gamepad1.left_stick_y;
+            //double turn  =  gamepad1.right_stick_x;
 //            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
 //            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
              //Tank Mode uses one stick to control each wheel.
              //- This requires no math, but it is hard to drive forward slowly and keep straight.
-             leftPower  = -gamepad1.left_stick_y ;
-             rightPower = -gamepad1.right_stick_y ;
+             //leftPower  = -gamepad1.left_stick_y ;
+             //ightPower = -gamepad1.right_stick_y ;
 
             // Send calculated power to wheels
-            leftFront.setPower(leftPower);
-            leftRear.setPower(leftPower);
-            rightFront.setPower(rightPower);
-            rightRear.setPower(rightPower);
+//            leftFront.setPower(leftPower);
+//            leftRear.setPower(leftPower);
+//            rightFront.setPower(rightPower);
+//            rightRear.setPower(rightPower);
 
+            double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
+            leftFront.setPower(frontLeftPower);
+            leftRear.setPower(backLeftPower);
+            rightFront.setPower(frontRightPower);
+            rightRear.setPower(backRightPower);
             if(gamepad1.dpad_up){
-                armDrive.setPower(.5);
-            }else if(gamepad1.dpad_down){
-                armDrive.setPower(-5);
-            }else{
-                armDrive.setPower(0);
+                armDrive.setTargetPosition(top);
+                armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armDrive.setPower(0.75);
             }
+            else if(gamepad1.dpad_down){
+                armDrive.setTargetPosition(bot);
+                armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armDrive.setPower(-0.75);
+            }
+
+            if(gamepad1.dpad_left){
+                top = top - 100;
+            }
+            else if (gamepad1.dpad_right) {
+                top = top + 100;
+
+            }
+
+            if (gamepad1.a){
+                clawServo.setPosition(top);
+            }
+            else if(gamepad1.b){
+                clawServo.setPosition(bot);
+            }
+
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Arm Test", armDrive.getCurrentPosition());
+            //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
