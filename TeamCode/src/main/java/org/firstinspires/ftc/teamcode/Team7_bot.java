@@ -33,13 +33,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -66,7 +66,7 @@ public class Team7_bot extends LinearOpMode {
     private DcMotor rightFront = null;
     private  DcMotor rightRear = null;
     private DcMotor armDrive = null;
-
+    private ColorSensor colorSensor;
     private Servo clawServo = null;
     public static int top = 450;
 
@@ -88,7 +88,7 @@ public class Team7_bot extends LinearOpMode {
         rightRear = hardwareMap.get(DcMotor.class, "rightRear");
         armDrive = hardwareMap.get(DcMotor.class, "arm");
         clawServo = hardwareMap.get(Servo.class, "clawServo");
-
+        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -104,32 +104,7 @@ public class Team7_bot extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
-            double armPower;
-
-
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            //double drive = -gamepad1.left_stick_y;
-            //double turn  =  gamepad1.right_stick_x;
-//            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-//            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-             //Tank Mode uses one stick to control each wheel.
-             //- This requires no math, but it is hard to drive forward slowly and keep straight.
-             //leftPower  = -gamepad1.left_stick_y ;
-             //ightPower = -gamepad1.right_stick_y ;
-
-            // Send calculated power to wheels
-//            leftFront.setPower(leftPower);
-//            leftRear.setPower(leftPower);
-//            rightFront.setPower(rightPower);
-//            rightRear.setPower(rightPower);
+            double armPower = 0.6;
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
@@ -151,12 +126,12 @@ public class Team7_bot extends LinearOpMode {
             if(gamepad1.dpad_up){
                 armDrive.setTargetPosition(top);
                 armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armDrive.setPower(0.6);
+                armDrive.setPower(armPower);
             }
             else if(gamepad1.dpad_down){
                 armDrive.setTargetPosition(bot);
                 armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armDrive.setPower(.6);
+                armDrive.setPower(armPower);
             }
 
             if(gamepad1.dpad_right){
@@ -182,6 +157,9 @@ public class Team7_bot extends LinearOpMode {
             }
 
 
+            telemetry.addData("Red",getAmountRed());
+            telemetry.addData("Green", getAmountGreen());
+            telemetry.addData("Blue", getAmountBlue());
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Arm Test", armDrive.getCurrentPosition());
@@ -189,4 +167,15 @@ public class Team7_bot extends LinearOpMode {
             telemetry.update();
         }
     }
+    public int getAmountRed(){
+        return colorSensor.red();
+    }
+
+    public int getAmountGreen(){
+        return colorSensor.green();
+    }
+    public int getAmountBlue(){
+        return colorSensor.blue();
+    }
+
 }

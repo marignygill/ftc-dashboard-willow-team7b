@@ -16,7 +16,7 @@ public class ImageOpMode extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return 0;
 
         while (opModeIsActive()) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -25,5 +25,6 @@ public class ImageOpMode extends LinearOpMode {
 
             sleep(20);
         }
+        return 0;
     }
 }

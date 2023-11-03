@@ -155,6 +155,7 @@ public class CIM_testing2_MO extends LinearOpMode  {
             /** Update loop info and play nice with the rest of the {@link Thread}s in the system */
             loopCount++;
         }
+        return loopCount;
     }
 
     // emits a line of poetry to the telemetry log

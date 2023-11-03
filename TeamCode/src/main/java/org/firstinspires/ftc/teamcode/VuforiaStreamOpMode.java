@@ -34,5 +34,6 @@ public class VuforiaStreamOpMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive());
+        return 0;
     }
 }

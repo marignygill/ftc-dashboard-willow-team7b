@@ -947,7 +947,7 @@ public class FtcDashboard implements OpModeManagerImpl.Notifications {
                         waitForStart();
 
                         if (isStopRequested()) {
-                            return;
+                            return 0;
                         }
                         
                         if (core.enabled) {
@@ -955,7 +955,8 @@ public class FtcDashboard implements OpModeManagerImpl.Notifications {
                         } else {
                             enable();
                         }
-                   }
+                        return 0;
+                    }
                 });
     }
 

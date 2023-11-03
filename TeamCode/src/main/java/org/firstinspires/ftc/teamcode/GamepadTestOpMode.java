@@ -38,7 +38,7 @@ public class GamepadTestOpMode extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return 0;
 
         while (opModeIsActive()) {
             logGamepad(telemetry, gamepad1, "gamepad1");
@@ -47,5 +47,6 @@ public class GamepadTestOpMode extends LinearOpMode {
 
             sleep(20);
         }
+        return 0;
     }
 }

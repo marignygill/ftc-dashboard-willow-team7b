@@ -33,7 +33,7 @@ public class OrbitOpMode extends LinearOpMode {
 
         waitForStart();
 
-        if (isStopRequested()) return;
+        if (isStopRequested()) return 0;
 
         while (opModeIsActive()) {
             double time = getRuntime();
@@ -61,5 +61,6 @@ public class OrbitOpMode extends LinearOpMode {
 
             sleep(20);
         }
+        return 0;
     }
 }

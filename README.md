@@ -1,4 +1,4 @@
-# FTC Dashboard
+i# FTC Dashboard
 
 FTC Dashboard provides telemetry and monitoring tools for FTC robots during operation with the following features:
 

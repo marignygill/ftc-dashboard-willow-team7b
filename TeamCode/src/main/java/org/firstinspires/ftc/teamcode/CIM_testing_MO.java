@@ -125,4 +125,5 @@ public class CIM_testing_MO extends LinearOpMode {
             telemetry.addData("Distance from sensor: ", dist);
             telemetry.update();
         }
+        return 0;
     }}
