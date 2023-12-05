@@ -66,13 +66,14 @@ public class Team7_bot extends LinearOpMode {
     private DcMotor rightFront = null;
     private  DcMotor rightRear = null;
     private DcMotor armDrive = null;
+    public static int top = 450;
+    public static int bot = 80;
     private ColorSensor colorSensor;
     private Servo clawServo = null;
-    public static int top = 450;
-
-    public static int bot = 80;
     public static double open = 0.5;
     public static double close = .9;
+
+
 
     @Override
     public void runOpMode() {
@@ -94,8 +95,9 @@ public class Team7_bot extends LinearOpMode {
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-//        rightFront.setDirection(DcMotor.Direction.REVERSE);
-//        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotorSimple.Direction.        rightFront.setDirection(DcMotor.Direction.FORWARD);
+);
         armDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -104,7 +106,7 @@ public class Team7_bot extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            double armPower = 0.6;
+            double armPower = 0.4;
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
@@ -123,6 +125,7 @@ public class Team7_bot extends LinearOpMode {
             leftRear.setPower(backLeftPower);
             rightFront.setPower(frontRightPower);
             rightRear.setPower(backRightPower);
+
             if(gamepad1.dpad_up){
                 armDrive.setTargetPosition(top);
                 armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -133,21 +136,6 @@ public class Team7_bot extends LinearOpMode {
                 armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armDrive.setPower(armPower);
             }
-
-            if(gamepad1.dpad_right){
-                top = top + 10;
-                armDrive.setTargetPosition(top);
-                armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armDrive.setPower(.6);
-            }
-            if(gamepad1.dpad_right){
-                top = top - 10;
-                armDrive.setTargetPosition(top);
-                armDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armDrive.setPower(.6);
-            }
-
-
 
             if (gamepad1.a){
                 clawServo.setPosition(open);
